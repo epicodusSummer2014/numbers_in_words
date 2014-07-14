@@ -29,26 +29,53 @@
                       "8": "eighty",
                       "9": "ninety"
                       };
+var tens;
+var placesArr = [tensAboveNineteen, singlesAndTeens];
+var tensPlace = function(num) {
+  var numArr= num.toString().split("");
+  if (num > 19 && num < 100 && numArr[1]!==0) {
+    return tensAboveNineteen[numArr[0]] + " " + singlesAndTeens[numArr[1]]
+  } else if(num < 1){
+    return "";
+  } else if(num < 100){
+    return tensAboveNineteen[numArr[0]];
+  }
+};
 
 var wordsToThousand = function (num) {
-  if (numArr.length ===1 || (numArr.length ===2 && numArr[0]==="1")){
-    return singlesAndTeens[num];
-  }else if(numArr[1]==="0" && numArr[2]==="0"){
-    return singlesAndTeens[numArr[0]] + " " + "hundred"
-  }
-  var finalWord = "";
-  for(var i=0; i<numArr.length; i++){
-    finalWord += placesArr[i][numArr[i]] + " ";
-  }
-};
-
-var numbersInWords = function(num) {
-
-  var placesArr = [tensAboveNineteen, singlesAndTeens];
-  var bigNums = ["hundred", "thousand"];
-
+  num = parseInt(num, 10);
   var numArr= num.toString().split("");
 
-
-  return finalWord.trim();
+  if(num==="000"){
+    return "";
+  }
+    else if (num < 20){
+    return singlesAndTeens[num];
+  } else if (num > 20 && num < 100) {
+    return tensPlace(num.toString());
+  } else if (num > 99 && num < 1000) {
+    return (singlesAndTeens[numArr[0]] + " hundred " + tensPlace(num-(100*num.toString().charAt(0)))).trim();
+  }
 };
+
+var threeDigits = function(num, pos1, pos2) {
+  if(num===0){
+    return ""
+  }else{
+    return wordsToThousand(num.toString().slice(pos1,pos2))
+  }
+}
+
+var numbersInWords = function(num) {
+  if(num > 999 && num < 999999){
+    return (wordsToThousand(num.toString().slice(-6,-3)) + " thousand " + wordsToThousand(num.toString().slice(-3))).trim();
+  }
+  if(num > 999999 && num < 999999999 ){
+    if(num % 1000000 === 0){
+      return wordsToThousand(num.toString().slice(-9,-6)) + " million"
+    }
+    return (wordsToThousand(num.toString().slice(-9,-6)) + " million " + wordsToThousand(num.toString().slice(-6,-3)) + " thousand " + wordsToThousand(num.toString().slice(-3))).trim()
+};
+}
+
+
