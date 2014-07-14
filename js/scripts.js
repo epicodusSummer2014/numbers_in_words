@@ -1,4 +1,4 @@
-  var singlesAndTeens = {"0": "zero",
+  var singlesAndTeens = {"0": "",
                      "1": "one",
                      "2": "two",
                      "3": "three",
@@ -43,10 +43,9 @@ var tensPlace = function(num) {
 };
 
 var wordsToThousand = function (num) {
-  num = parseInt(num, 10);
   var numArr= num.toString().split("");
-
-  if(num==="000"){
+num = parseInt(num, 10);
+  if(num==="000" || num === 0){
     return "";
   }
     else if (num < 20){
@@ -59,23 +58,44 @@ var wordsToThousand = function (num) {
 };
 
 var threeDigits = function(num, pos1, pos2) {
-  if(num===0){
+  if(num===0 || num ==="000"){
     return ""
   }else{
-    return wordsToThousand(num.toString().slice(pos1,pos2))
+    return wordsToThousand(num.toString().slice(pos1, pos2))
   }
 }
 
+var ifThousand = function(num) {
+  if (num > 0 ) {
+    return " thousand ";
+  } else {
+    return "";
+  }
+};
+
 var numbersInWords = function(num) {
+  num = parseInt(num, 10);
+  if(num > 1 && num < 1000) {
+    return wordsToThousand(num);
+  }
   if(num > 999 && num < 999999){
-    return (wordsToThousand(num.toString().slice(-6,-3)) + " thousand " + wordsToThousand(num.toString().slice(-3))).trim();
+    return (threeDigits(num, -6, -3) + " thousand " + threeDigits(num, -3)).trim();
   }
   if(num > 999999 && num < 999999999 ){
     if(num % 1000000 === 0){
-      return wordsToThousand(num.toString().slice(-9,-6)) + " million"
+      return threeDigits(num, -9,-6) + " million"
     }
-    return (wordsToThousand(num.toString().slice(-9,-6)) + " million " + wordsToThousand(num.toString().slice(-6,-3)) + " thousand " + wordsToThousand(num.toString().slice(-3))).trim()
+    return (threeDigits(num, -9, -6) + " million " + threeDigits(num,-6,-3) + ifThousand(num.toString().slice(-6,-3)) + threeDigits(num, -3)).trim();
+  };
 };
-}
 
+$(document).ready(function(){
+  $("form#wordInput").submit(function(event){
+    var input= $("#input").val()
+    var result = numbersInWords(input);
+    $("span").text(result)
+    $("#input").val("");
+    event.preventDefault();
+  })
+})
 
